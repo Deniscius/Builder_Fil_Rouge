@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('quantite_initiale')->default(0); // Quantité initiale
             $table->timestamps();
+            $table->unsignedBigInteger('projet_id')->nullable();
+            $table->foreign('projet_id')->references('id')->on('projets')->onDelete('set null');
         });
     }
 

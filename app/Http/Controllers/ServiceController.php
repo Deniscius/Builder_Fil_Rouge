@@ -1,65 +1,68 @@
 <?php
-
+// app/Http/Controllers/ServiceController.php
 
 // app/Http/Controllers/ServiceController.php
 
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Models\Projet;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
     public function index($projetId)
     {
+        $projet = Projet::findOrFail($projetId);
         $services = Service::where('projet_id', $projetId)->get();
-        return view('services.index', compact('services', 'projetId'));
+        return view('services.index', compact('services', 'projet'));
     }
 
     public function create($projetId)
     {
-        return view('services.create', compact('projetId'));
+        $projet = Projet::findOrFail($projetId);
+        return view('services.create', compact('projet'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $projetId)
     {
         $request->validate([
-            'projet_id' => 'required|exists:projets,id',
             'nomService' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'typeService' => 'required|string|max:255',
         ]);
 
-        Service::create($request->all());
+        $service = new Service($request->all());
+        $service->projet_id = $projetId;
+        $service->save();
 
-        return redirect()->route('services.index', $request->projet_id)->with('success', 'Service créé avec succès.');
+        return redirect()->route('services.index', ['projetId' => $projetId])->with('success', 'Service créé avec succès.');
     }
 
-    public function edit($id)
+    public function edit($projetId, $id)
     {
+        $projet = Projet::findOrFail($projetId);
         $service = Service::findOrFail($id);
-        return view('services.edit', compact('service'));
+        return view('services.edit', compact('service', 'projet'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $projetId, $id)
     {
         $request->validate([
-            'projet_id' => 'required|exists:projets,id',
             'nomService' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'typeService' => 'required|string|max:255',
         ]);
 
         $service = Service::findOrFail($id);
         $service->update($request->all());
 
-        return redirect()->route('services.index', $request->projet_id)->with('success', 'Service mis à jour avec succès.');
+        return redirect()->route('services.index', ['projetId' => $projetId])->with('success', 'Service mis à jour avec succès.');
     }
 
-    public function destroy($id)
+    public function destroy($projetId, $id)
     {
         $service = Service::findOrFail($id);
-        $projetId = $service->projet_id;
         $service->delete();
 
-        return redirect()->route('services.index', $projetId)->with('success', 'Service supprimé avec succès.');
+        return redirect()->route('services.index', ['projetId' => $projetId])->with('success', 'Service supprimé avec succès.');
     }
 }

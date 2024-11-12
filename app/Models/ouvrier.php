@@ -13,10 +13,15 @@ class Ouvrier extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nomOuvrier', 'service_id'];
+    protected $fillable = ['nomOuvrier', 'specialisation', 'service_id', 'projet_id'];
 
     public function service()
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function projet()
+    {
+        return $this->belongsTo(Projet::class);
     }
 }

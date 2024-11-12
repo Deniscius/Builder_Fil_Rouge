@@ -11,11 +11,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ouvriers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('service_id')->constrained()->onDelete('cascade');
-            $table->string('nomOuvrier');
-            $table->timestamps();
+        Schema::table('ouvriers', function (Blueprint $table) {
             $table->unsignedBigInteger('projet_id')->nullable();
             $table->foreign('projet_id')->references('id')->on('projets')->onDelete('set null');
         });
@@ -23,8 +19,11 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('ouvriers');
+        Schema::table('ouvriers', function (Blueprint $table) {
+            $table->dropForeign(['projet_id']);
+            $table->dropColumn('projet_id');
+        });
     }
 };

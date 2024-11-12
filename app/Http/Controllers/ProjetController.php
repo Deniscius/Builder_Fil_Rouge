@@ -4,8 +4,6 @@
 
 // app/Http/Controllers/ProjetController.php
 
-// app/Http/Controllers/ProjetController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\Projet;
@@ -15,13 +13,13 @@ use App\Models\Ouvrier;
 use App\Models\Ressource;
 use App\Models\Operation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjetController extends Controller
-
 {
     public function index()
     {
-        $projets = Projet::all();
+        $projets = Auth::user()->projets;
         return view('projets.index', compact('projets'));
     }
 
@@ -50,7 +48,9 @@ class ProjetController extends Controller
             'dateFin' => 'required|date',
         ]);
 
-        Projet::create($request->all());
+        $projet = new Projet($request->all());
+        $projet->user_id = Auth::id();
+        $projet->save();
 
         return redirect()->route('projets.index')->with('success', 'Projet créé avec succès.');
     }
@@ -80,6 +80,7 @@ class ProjetController extends Controller
     public function sites($projetId)
     {
         $sites = Site::where('projet_id', $projetId)->get();
-        return view('sites.index', compact('sites', 'projetId'));
+        $projet = Projet::findOrFail($projetId);
+        return view('sites.index', compact('sites', 'projet'));
     }
 }

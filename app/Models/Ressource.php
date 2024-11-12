@@ -2,10 +2,6 @@
 
 // app/Models/Ressource.php
 
-// app/Models/Ressource.php
-
-// app/Models/Ressource.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,20 +11,15 @@ class Ressource extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nomRessource', 'description', 'projet_id', 'quantite_initiale'];
+    protected $fillable = ['nomRessource', 'typeRessource', 'quantite', 'service_id', 'projet_id'];
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 
     public function projet()
     {
         return $this->belongsTo(Projet::class);
-    }
-
-    public function services()
-    {
-        return $this->belongsToMany(Service::class);
-    }
-
-    public function quantites()
-    {
-        return $this->hasMany(RessourceQuantite::class);
     }
 }

@@ -1,0 +1,12 @@
+/* resources/css/app.css */
+
+.navbar.fixed-top {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030; /* Assurez-vous que la barre de navigation est au-dessus des autres éléments */
+}
+
+body {
+    padding-top: 60px; /* Ajoutez un padding-top pour éviter que le contenu ne soit caché sous la barre de navigation */
+}
